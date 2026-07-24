@@ -4,6 +4,7 @@ import (
 	"github.com/monishpn/page_pulse/models"
 	"gofr.dev/pkg/gofr"
 	gofrHttp "gofr.dev/pkg/gofr/http"
+	"gofr.dev/pkg/gofr/http/response"
 )
 
 type AuditService interface {
@@ -27,5 +28,10 @@ func (h *handler) AuditURL(ctx *gofr.Context) (any, error) {
 		return nil, gofrHttp.ErrorInvalidParam{Params: []string{"url"}}
 	}
 
-	return h.Service.AuditURL(ctx, body.URL)
+	audit, err := h.Service.AuditURL(ctx, body.URL)
+	if err != nil {
+		return nil, err
+	}
+
+	return response.Raw{Data: audit}, nil
 }
