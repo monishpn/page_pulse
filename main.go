@@ -5,6 +5,7 @@ import (
 
 	"github.com/monishpn/page_pulse/handler"
 	"github.com/monishpn/page_pulse/service"
+	"github.com/monishpn/page_pulse/store/cache"
 )
 
 func main() {
@@ -12,7 +13,10 @@ func main() {
 	app := gofr.New()
 
 	requestTimeout := app.Config.GetOrDefault("REQUEST_TIMEOUT", "30")
-	auditSvc := service.New(requestTimeout)
+	requestTTL := app.Config.GetOrDefault("REQUEST_TTL", "10")
+
+	cacheStore := cache.New(requestTTL)
+	auditSvc := service.New(requestTimeout, cacheStore)
 	auditHdlr := handler.New(auditSvc)
 	// register route greet
 	app.POST("/audit", auditHdlr.AuditURL)

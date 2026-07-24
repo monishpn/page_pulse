@@ -14,21 +14,39 @@ import (
 	"golang.org/x/net/html"
 )
 
-type service struct {
-	requestTimeout time.Duration
+type CacheStore interface {
+	GetAudit(ctx *gofr.Context, key string) (*models.AuditResponse, error)
+	PutAudit(ctx *gofr.Context, a *models.AuditResponse) error
+	CheckAudit(ctx *gofr.Context, key string) (bool, error)
 }
 
-func New(requestTimeout string) *service {
+type service struct {
+	requestTimeout time.Duration
+	cacheStore     CacheStore
+}
+
+func New(requestTimeout string, cacheStore CacheStore) *service {
 	timeoutInt, err := strconv.Atoi(requestTimeout)
 	if err != nil {
 		// If timeout not in int, set it back to default
 		timeoutInt = 30
 	}
 
-	return &service{requestTimeout: time.Duration(timeoutInt) * time.Second}
+	return &service{
+		requestTimeout: time.Duration(timeoutInt) * time.Second,
+		cacheStore:     cacheStore,
+	}
+
 }
 
 func (s *service) AuditURL(ctx *gofr.Context, target string) (*models.AuditResponse, *models.CustomError) {
+	if exists, err := s.cacheStore.CheckAudit(ctx, target); err == nil && exists {
+		if cached, err := s.cacheStore.GetAudit(ctx, target); err == nil && cached != nil {
+			ctx.Logger.Infof("URL: %s extracted from Cache", target)
+			return cached, nil
+		}
+	}
+
 	client := &http.Client{Timeout: s.requestTimeout}
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, target, http.NoBody)
@@ -56,7 +74,7 @@ func (s *service) AuditURL(ctx *gofr.Context, target string) (*models.AuditRespo
 
 	title, metaDescription, h1 := parseHTML(body)
 
-	return &models.AuditResponse{
+	audit := &models.AuditResponse{
 		URL:             target,
 		FinalURL:        resp.Request.URL.String(),
 		StatusCode:      resp.StatusCode,
@@ -69,7 +87,14 @@ func (s *service) AuditURL(ctx *gofr.Context, target string) (*models.AuditRespo
 		Server:          resp.Header.Get("Server"),
 		HTTPS:           resp.Request.URL.Scheme == "https",
 		AuditedAt:       time.Now().UTC().Format(time.RFC3339),
-	}, nil
+	}
+
+	err = s.cacheStore.PutAudit(ctx, audit)
+	if err != nil {
+		ctx.Logger.Errorf("failed to put audit data of URL: %v to cache. Error: %v", target, err)
+	}
+
+	return audit, nil
 }
 
 // parseHTML walks the token stream once, picking out the page title, the

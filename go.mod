@@ -3,6 +3,7 @@ module github.com/monishpn/page_pulse
 go 1.26.4
 
 require (
+	github.com/redis/go-redis/v9 v9.21.0
 	gofr.dev v1.58.0
 	golang.org/x/net v0.56.0
 )
@@ -58,7 +59,6 @@ require (
 	github.com/prometheus/procfs v0.21.1 // indirect
 	github.com/redis/go-redis/extra/rediscmd/v9 v9.21.0 // indirect
 	github.com/redis/go-redis/extra/redisotel/v9 v9.21.0 // indirect
-	github.com/redis/go-redis/v9 v9.21.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/segmentio/kafka-go v0.4.51 // indirect
 	github.com/stretchr/testify v1.11.1 // indirect
