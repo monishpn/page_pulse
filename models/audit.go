@@ -12,6 +12,5 @@ type AuditResponse struct {
 	ContentLength   int64  `json:"contentLength"`
 	Server          string `json:"server"`
 	HTTPS           bool   `json:"https"`
-	RedirectCount   int    `json:"redirectCount"`
 	AuditedAt       string `json:"auditedAt"`
 }

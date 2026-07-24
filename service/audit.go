@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -13,30 +14,22 @@ import (
 	"golang.org/x/net/html"
 )
 
-const (
-	requestTimeout = 5 * time.Second
-	maxRedirects   = 10
-)
+type service struct {
+	requestTimeout time.Duration
+}
 
-type service struct{}
+func New(requestTimeout string) *service {
+	timeoutInt, err := strconv.Atoi(requestTimeout)
+	if err != nil {
+		// If timeout not in int, set it back to default
+		timeoutInt = 30
+	}
 
-func New() *service {
-	return &service{}
+	return &service{requestTimeout: time.Duration(timeoutInt) * time.Second}
 }
 
 func (s *service) AuditURL(ctx *gofr.Context, target string) (*models.AuditResponse, *models.CustomError) {
-	var redirectCount int
-
-	client := &http.Client{
-		Timeout: requestTimeout,
-		CheckRedirect: func(_ *http.Request, via []*http.Request) error {
-			redirectCount = len(via)
-			if len(via) >= maxRedirects {
-				return http.ErrUseLastResponse
-			}
-			return nil
-		},
-	}
+	client := &http.Client{Timeout: s.requestTimeout}
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, target, http.NoBody)
 	if err != nil {
@@ -75,7 +68,6 @@ func (s *service) AuditURL(ctx *gofr.Context, target string) (*models.AuditRespo
 		ContentLength:   int64(len(body)),
 		Server:          resp.Header.Get("Server"),
 		HTTPS:           resp.Request.URL.Scheme == "https",
-		RedirectCount:   redirectCount,
 		AuditedAt:       time.Now().UTC().Format(time.RFC3339),
 	}, nil
 }

@@ -11,7 +11,8 @@ func main() {
 	// initialize gofr object
 	app := gofr.New()
 
-	auditSvc := service.New()
+	requestTimeout := app.Config.GetOrDefault("REQUEST_TIMEOUT", "30")
+	auditSvc := service.New(requestTimeout)
 	auditHdlr := handler.New(auditSvc)
 	// register route greet
 	app.POST("/audit", auditHdlr.AuditURL)
