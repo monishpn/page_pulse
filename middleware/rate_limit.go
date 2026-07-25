@@ -10,6 +10,8 @@ import (
 
 	"gofr.dev/pkg/gofr"
 	gofrHTTP "gofr.dev/pkg/gofr/http"
+
+	"github.com/monishpn/page_pulse/models"
 )
 
 // Although we have defaults set in main, this is to make sure it strconv doesn't break.
@@ -91,7 +93,10 @@ func (rl *RateLimiter) Middleware(inner http.Handler) http.Handler {
 			w.Header().Set("Retry-After", strconv.FormatInt(retryAfter, 10))
 
 			responder := gofrHTTP.NewResponder(w, r.Method)
-			responder.Respond(nil, gofrHTTP.ErrorTooManyRequests{})
+			responder.Respond(nil, &models.CustomError{
+				Message: "rate limit exceeded, please retry after 1 minute",
+				Code:    http.StatusTooManyRequests,
+			})
 
 			return
 		}

@@ -1,10 +1,11 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/monishpn/page_pulse/models"
 	"github.com/monishpn/page_pulse/validator"
 	"gofr.dev/pkg/gofr"
-	gofrHttp "gofr.dev/pkg/gofr/http"
 	"gofr.dev/pkg/gofr/http/response"
 )
 
@@ -26,7 +27,7 @@ func (h *handler) AuditURL(ctx *gofr.Context) (any, error) {
 	}
 
 	if err := ctx.Bind(&body); err != nil {
-		return nil, gofrHttp.ErrorInvalidParam{Params: []string{"url"}}
+		return nil, &models.CustomError{Message: "invalid request body", Code: http.StatusBadRequest}
 	}
 
 	if err := validator.ValidateURL(body.URL); err != nil {
