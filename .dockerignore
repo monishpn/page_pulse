@@ -1,0 +1,10 @@
+.git
+.idea
+.github
+
+README.md
+
+configs/.local.env
+web/.local.env
+
+**/*_test.go
