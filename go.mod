@@ -4,6 +4,8 @@ go 1.26.4
 
 require (
 	github.com/redis/go-redis/v9 v9.21.0
+	github.com/stretchr/testify v1.11.1
+	go.uber.org/mock v0.6.0
 	gofr.dev v1.58.0
 	golang.org/x/net v0.56.0
 )
@@ -61,7 +63,6 @@ require (
 	github.com/redis/go-redis/extra/redisotel/v9 v9.21.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/segmentio/kafka-go v0.4.51 // indirect
-	github.com/stretchr/testify v1.11.1 // indirect
 	github.com/vektah/gqlparser/v2 v2.5.36 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
@@ -82,7 +83,6 @@ require (
 	go.opentelemetry.io/otel/trace v1.44.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
-	go.uber.org/mock v0.6.0 // indirect
 	golang.org/x/crypto v0.54.0 // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect
