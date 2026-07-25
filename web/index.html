@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page Pulse</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="card">
+    <h1>Page Pulse</h1>
+    <p class="subtitle">Enter a URL to audit its health and metadata.</p>
+
+    <form id="audit-form">
+      <input
+        type="text"
+        id="url-input"
+        name="url"
+        placeholder="https://example.com"
+        autocomplete="off"
+        required
+      />
+      <button type="submit" id="submit-btn">Audit</button>
+    </form>
+
+    <div id="result" class="result"></div>
+
+    <footer>
+      <a href="https://digitalheroesco.com" target="_blank" rel="noopener noreferrer">Built for Digital Heroes Training Task</a>
+    </footer>
+  </main>
+
+  <script src="/config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
