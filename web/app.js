@@ -3,7 +3,7 @@ const urlInput = document.getElementById('url-input');
 const submitBtn = document.getElementById('submit-btn');
 const resultEl = document.getElementById('result');
 
-const API_BASE_URL = window.API_BASE_URL || 'http://localhost:8000';
+const API_BASE_URL = window.API_BASE_URL || 'https://page-pulse-bwc6.onrender.com';
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
