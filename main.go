@@ -12,7 +12,7 @@ import (
 func main() {
 	app := gofr.New()
 
-	requestTimeout := app.Config.GetOrDefault("REQUEST_TIMEOUT", "30")
+	requestTimeout := app.Config.GetOrDefault("URL_REQUEST_TIMEOUT", "30")
 	requestTTL := app.Config.GetOrDefault("REQUEST_TTL", "10")
 	rateLimitMax := app.Config.GetOrDefault("RATE_LIMIT_MAX", "10")
 	rateLimitWindowSeconds := app.Config.GetOrDefault("RATE_LIMIT_WINDOW_SECONDS", "60")
