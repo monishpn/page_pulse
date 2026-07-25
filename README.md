@@ -2,6 +2,8 @@
 
 A production-grade website audit service. Submit a public HTTP/HTTPS URL and get back a structured audit of the page — status code, title, meta description, H1, headers, timing — optimized for reliability and observability rather than SEO analysis or crawling.
 
+**Live URL:** https://page-pulse-red-six.vercel.app
+
 **Live backend:** https://page-pulse-bwc6.onrender.com
 
 Built as the Digital Heroes Training Task.
