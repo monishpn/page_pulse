@@ -42,7 +42,7 @@ Request
   → Validator: reject invalid / unsafe URLs
   → Service:
       → Redis lookup (cache hit → return immediately)
-      → HTTP GET the target URL (bounded by REQUEST_TIMEOUT)
+      → HTTP GET the target URL (bounded by URL_REQUEST_TIMEOUT)
       → Parse HTML (title, meta description, h1)
       → Build AuditResponse
       → Write-through to Redis (best-effort; failures are logged, not fatal)
@@ -112,7 +112,7 @@ Dockerfile               Multi-stage build → alpine runtime image
 | `400` | Malformed JSON body, or the target itself can't be parsed as a request | `invalid request body` |
 | `429` | Rate limit exceeded for the client IP | `rate limit exceeded, please retry after 1 minute` |
 | `502` | Target host unreachable / connection failed | `failed to reach url: ...` |
-| `504` | Fetching the target exceeded `REQUEST_TIMEOUT` | `request timed out: ...` |
+| `504` | Fetching the target exceeded `URL_REQUEST_TIMEOUT` | `request timed out: ...` |
 
 All of the above were verified against a running instance while writing this doc.
 
@@ -125,13 +125,13 @@ Everything is env-var driven (`app.Config.GetOrDefault` in `main.go`), loaded vi
 | `HTTP_PORT` | `8000` | Port the API listens on |
 | `REDIS_HOST` | — | Required for caching and rate limiting |
 | `REDIS_PORT` | — | |
-| `REQUEST_TIMEOUT` | `30` | **Seconds.** Upper bound on fetching the target URL |
+| `URL_REQUEST_TIMEOUT` | `30` | **Seconds.** Upper bound on fetching the target URL |
 | `REQUEST_TTL` | `10` | **Minutes.** Cache TTL for a successful audit |
 | `RATE_LIMIT_MAX` | `10` | Requests allowed per client IP per window |
 | `RATE_LIMIT_WINDOW_SECONDS` | `60` | Rate limit window size, in seconds |
 | `TRUST_PROXY_HEADERS` | `false` | Set `true` behind a reverse proxy (e.g. Render/Railway) so rate limiting keys off `X-Forwarded-For`/`X-Real-IP` instead of the proxy's own IP |
 
-`REQUEST_TIMEOUT` is seconds; `REQUEST_TTL` is minutes — easy to mix up, worth double-checking if audits are caching for longer/shorter than expected.
+`URL_REQUEST_TIMEOUT` is seconds; `REQUEST_TTL` is minutes — easy to mix up, worth double-checking if audits are caching for longer/shorter than expected.
 
 ## Running the backend locally
 
@@ -175,7 +175,7 @@ docker build -t page_pulse .
 docker run -p 8000:8000 \
   -e REDIS_HOST=<host> \
   -e REDIS_PORT=<port> \
-  -e REQUEST_TIMEOUT=10 \
+  -e URL_REQUEST_TIMEOUT=10 \
   -e REQUEST_TTL=10 \
   -e RATE_LIMIT_MAX=10 \
   -e RATE_LIMIT_WINDOW_SECONDS=60 \
