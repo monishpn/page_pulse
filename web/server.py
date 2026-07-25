@@ -30,7 +30,7 @@ def load_env_file(path):
 load_env_file(os.path.join(WEB_DIR, ".local.env"))
 
 PORT = int(os.environ.get("PORT", "3000"))
-BACKEND_URL = os.environ.get("BACKEND_URL", "http://localhost:8000")
+BACKEND_URL = os.environ.get("BACKEND_URL", "https://page-pulse-bwc6.onrender.com")
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
