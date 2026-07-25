@@ -2,10 +2,11 @@ package validator
 
 import (
 	"net"
+	"net/http"
 	"net/url"
 	"strings"
 
-	gofrHttp "gofr.dev/pkg/gofr/http"
+	"github.com/monishpn/page_pulse/models"
 )
 
 const maxURLLength = 2048
@@ -15,31 +16,31 @@ const maxURLLength = 2048
 // private network.
 func ValidateURL(raw string) error {
 	if strings.TrimSpace(raw) == "" {
-		return gofrHttp.ErrorInvalidParam{Params: []string{"empty url"}}
+		return &models.CustomError{Message: "url is required", Code: http.StatusBadRequest}
 	}
 
 	if len(raw) > maxURLLength {
-		return gofrHttp.ErrorInvalidParam{Params: []string{"url too long"}}
+		return &models.CustomError{Message: "url must not exceed 2048 characters", Code: http.StatusBadRequest}
 	}
 
 	parsed, err := url.Parse(raw)
 	if err != nil {
-		return gofrHttp.ErrorInvalidParam{Params: []string{"url is not a valid URL"}}
+		return &models.CustomError{Message: "url is not a valid URL", Code: http.StatusBadRequest}
 	}
 
 	switch strings.ToLower(parsed.Scheme) {
 	case "http", "https":
 	default:
-		return gofrHttp.ErrorInvalidParam{Params: []string{"url scheme must be http or https"}}
+		return &models.CustomError{Message: "url scheme must be http or https", Code: http.StatusBadRequest}
 	}
 
 	host := parsed.Hostname()
 	if host == "" {
-		return gofrHttp.ErrorInvalidParam{Params: []string{"url must include a host"}}
+		return &models.CustomError{Message: "url must include a host", Code: http.StatusBadRequest}
 	}
 
 	if isDisallowedHost(host) {
-		return gofrHttp.ErrorInvalidParam{Params: []string{"url must not target localhost or a private network"}}
+		return &models.CustomError{Message: "url must not target localhost or a private network", Code: http.StatusBadRequest}
 	}
 
 	return nil
